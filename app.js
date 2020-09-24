@@ -7,13 +7,19 @@ const usersRoutes = require('./api/routes/users');
 
 
 
-const connectionString = 'mongodb+srv://yahiya:nNUWRDgxDPcvuW5Z@task1.4yi06.mongodb.net/users?retryWrites=true&w=majority';
+const connectionString = 'mongodb://localhost:27017/testdb';
 mongoose.connect(connectionString, {
   useCreateIndex: true,
   useNewUrlParser: true,
   useUnifiedTopology: true
-})
-mongoose.Promise = global.Promise;
+});
+const db = mongoose.connection;
+db.on('error', (err)=>{
+  console.log(err);
+});
+db.once('open',()=>{
+  console.log("Database connection established");
+});
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));

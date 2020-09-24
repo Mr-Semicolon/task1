@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
     },
     password: { type: String,
          required: true
-        , match : /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/
+        , match : /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/
     },
     firstName: {
             type: String,
@@ -26,7 +26,8 @@ const userSchema = mongoose.Schema({
             type: String,
          required: true
     },
-    avatarImage: { type: String
+    avatarImage: { type: String ,
+        required: true
     }
 });
 

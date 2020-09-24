@@ -18,18 +18,18 @@ const storage = multer.diskStorage({
   });
   
   const fileFilter = (req, file, callbackfun) => {
-    // reject a file
+ 
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-      callbackfun(new Error('message : File went wrong while saving'), true); 
+      callbackfun(null, true); 
     } else {
-      callbackfun(new Error('message : please choose png or jpg pic format only'), false);
+      callbackfun(null, false);
     }
   };
   
   const upload = multer({
     storage: storage,
     limits: {
-      fileSize: 1024 * 3
+      fileSize: 1024 * 300
     },
     fileFilter: fileFilter
   });
@@ -41,7 +41,7 @@ const User = require("../models/user");
 ////////////////////////--SIGN UP--///////////////////////////////////
 
 
-router.post("/signup", upload.single('avatarImage') ,(req, res, next) => {
+router.post("/signup",upload.single('avatarImage') ,(req, res, next) => {
     User.find({ email: req.body.email })
       .exec()
       .then(user => {
@@ -62,17 +62,13 @@ router.post("/signup", upload.single('avatarImage') ,(req, res, next) => {
                 email: req.body.email ,
                 password: hash ,
                 firstName : req.body.firstName ,
-                lasName : req.body.lasName ,
+                lastName : req.body.lastName ,
                 avatarImage : req.file.path
               });
               user
                 .save()
                 .then(result => {
-                  if(user.avatarImage == null){
-                    res.status(404).json({
-                      message: "image not found please add one"
-                    })
-                  }
+                
                   console.log(result);
                   res.status(201).json({
                     message: "User has successfully created"
@@ -144,7 +140,7 @@ router.post("/signup", upload.single('avatarImage') ,(req, res, next) => {
   router.patch("/:userID", checkAuthentication, (req, res, next) => {
     const id = req.params.userId;
     const updates = {};
-    for (const indexx of req.body) {
+    for (const indexx of Object.keys(req.body)) {
       updates[indexx.propName] = indexx.value;
     }
     User.update({ _id: id }, { $set: updates })
